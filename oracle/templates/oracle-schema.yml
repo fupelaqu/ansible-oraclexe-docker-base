@@ -1,0 +1,16 @@
+---
+
+  - file: path=/{{module}} state=directory owner=oracle group=dba
+
+  # Create {{module}} schema
+  - name: copy {{module}} oracle sql scripts
+    copy: src=sql dest=/{{module}}/ owner=oracle group=dba mode=0500
+    register: {{module}}_sql_scripts
+  - name: copy {{module}} oracle sh script
+    copy: src=oracle-schema.sh dest=/{{module}}/oracle-schema.sh owner=oracle group=dba mode=0500
+    register: {{module}}_schema_script
+  - name: create {{module}} oracle schema
+    shell: /{{module}}/oracle-schema.sh chdir=/{{module}}
+    sudo_user: oracle
+    register: execute_{{module}}_schema_script
+    when: {{module}}_sql_scripts|changed or {{module}}_schema_script|changed

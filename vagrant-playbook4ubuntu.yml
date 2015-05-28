@@ -1,0 +1,45 @@
+---
+#Vagrant Ansible Playbook
+  - name: Install docker and base images
+    hosts: docker
+    remote_user: $user
+    roles:
+      - {role: docker.ubuntu, when: "ansible_distribution == 'Ubuntu'", kernel_pkg_state: present, kernel_update_and_reboot_permitted: no, pip_version_docker_py: 1.1}
+      - ubuntu-14.04
+
+  - name: Install oracle db and schemas
+    hosts: oracle
+    remote_user: $user
+    roles:
+      - oracle
+    post_tasks:
+      - name: ensure oracle container is running
+        docker:
+          image: "{{module}}:{{module_version}}"
+          memory_limit: 1024MB
+          name: "{{module}}"
+          ports: 1521
+          state: reloaded
+          restart_policy: always
+        register: start_oracle
+
+      - name: inspect oracle container
+        shell: docker inspect {{module}}
+        register: inspect_oracle_response
+
+      - set_fact: oracle_db_ip="{{(inspect_oracle_response.stdout|from_json)[0].NetworkSettings.IPAddress}}" oracle_db_port="{{(inspect_oracle_response.stdout|from_json)[0].NetworkSettings.Ports['1521/tcp'][0].HostPort}}"
+        when: inspect_oracle_response|changed
+
+      - name: ensure {{module}} ambassador is running
+        docker:
+          image: cpuguy83/docker-grand-ambassador
+          name: "oracle_{{module}}_ambassador"
+          command: "-name {{module}}"
+          net: "bridge"
+          expose: "1521"
+          ports: "{{ hostvars[inventory_hostname]['ansible_eth1']['ipv4']['address'] }}:1521:1521"
+          volumes: /var/run/docker.sock:/var/run/docker.sock:ro
+          state: reloaded
+          restart_policy: always
+        register: start_ambassador
+
