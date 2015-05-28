@@ -1,0 +1,52 @@
+---
+
+  - name: check ubuntu14.04 with oraclexe docker base image
+    shell: docker inspect laposte/ubuntu14.04-oraclexe:{{oracle_xe_version}}
+    ignore_errors: yes
+    register: search_ubuntu_oraclexe_response
+
+  - include: ubuntu14.04-oraclexe-base.yml
+    when: search_ubuntu_oraclexe_response|failed
+
+  - file: path=/tmp/{{module}}/roles/oracle/files/sql state=directory
+
+  - template: src={{item}} dest=/tmp/{{module}}/roles/oracle/files/sql
+    with_items:
+      - io.sql
+      - role.sql
+      - tablespaces.sql
+      - user.sql
+
+  - template: src={{item}} dest=/tmp/{{module}}/roles/oracle/files
+    with_items:
+      - oracle-schema.sh
+      - oracle-pump.sh
+
+  - file: path=/tmp/{{module}}/roles/oracle/tasks state=directory
+
+  - template: src={{item}} dest=/tmp/{{module}}/roles/oracle/tasks
+    with_items:
+      - oracle-schema.yml
+      - oracle-pump.yml
+
+  - template: src=oracle.yml dest=/tmp/{{module}}/roles/oracle/tasks/main.yml
+
+  - local_action: stat path="{{module}}.dmp.zip"
+    sudo: no
+    register: oracle_pump
+  - copy: src={{module}}.dmp.zip dest=/tmp/{{module}}
+    when: oracle_pump.stat.exists
+
+  - template: src=Dockerfile dest=/tmp/{{module}}
+
+  - template: src=site.yml dest=/tmp/{{module}}
+
+  - copy: src={{item}} dest=/tmp/{{module}}
+    with_fileglob:
+      - "{{module}}/*"
+
+  - name: build {{module}} with ansible
+    docker_image: path="/tmp/{{module}}"
+                  name="{{module}}"
+                  state=present
+                  tag="{{module_version}}"

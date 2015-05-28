@@ -1,0 +1,18 @@
+---
+
+  - file: path=/{{module}} state=directory owner=oracle group=dba
+
+  # Import {{module}} pump
+  - name: create import{{module}}DB
+    file: path=/u01/app/oracle/import{{db_schema}}DB state=directory owner=oracle group=dba
+  - name: extract {{module}} pump
+    unarchive: src={{module}}.dmp.zip dest=/u01/app/oracle/import{{db_schema}}DB copy=no
+    register: {{module}}_pump
+  - name: copy {{module}} oracle pump script sh
+    copy: src=oracle-pump.sh dest=/{{module}}/oracle-pump.sh owner=oracle group=dba mode=0500
+    register: {{module}}_pump_script
+  - name: import {{module}} oracle pump
+    shell: /{{module}}/oracle-pump.sh chdir=/{{module}}
+    sudo_user: oracle
+    register: execute_{{module}}_pump_script
+    when: {{module}}_pump|changed or {{module}}_pump_script|changed

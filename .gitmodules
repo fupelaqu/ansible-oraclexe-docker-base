@@ -1,4 +1,4 @@
-[submodule "ubuntu-14.04/roles/ansible-oraclexe"]
-	path = ubuntu-14.04/roles/ansible-oraclexe
+[submodule "files/ubuntu-14.04/roles/ansible-oraclexe"]
+	path = files/ubuntu-14.04/roles/ansible-oraclexe
 	url = git@github.com:fupelaqu/ansible-oraclexe.git
 	branch = master

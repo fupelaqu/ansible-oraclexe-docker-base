@@ -1,0 +1,14 @@
+---
+
+  - file: path=/{{module}} state=directory owner=oracle group=dba
+
+  - shell: /etc/init.d/oracle-xe start
+
+  # Create {{module}} schema
+  - include: oracle-schema.yml
+
+  # Import {{module}} pump
+  - local_action: stat path="{{module}}.dmp.zip"
+    register: oracle_pump
+  - include: oracle-pump.yml
+    when: oracle_pump.stat.exists

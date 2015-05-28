@@ -1,0 +1,14 @@
+---
+#eboutique Ansible Playbook
+  - name: Install docker
+    hosts: docker
+    remote_user: $user
+    roles:
+      - {role: docker, when: "ansible_os_family == 'RedHat'"}
+      - {role: docker.ubuntu, when: "ansible_distribution == 'Ubuntu'", kernel_pkg_state: present, kernel_update_and_reboot_permitted: no}
+
+  - name: Install oracle db and schemas
+    hosts: oracle
+    remote_user: $user
+    roles:
+      - {role: oracle, module: "test", module_version: "{{test.version}}", db_schema: "{{test.db_schema}}", db_username: "{{test.db_username}}", db_password: "{{test.db_password}}"}
