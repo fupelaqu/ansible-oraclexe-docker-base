@@ -10,7 +10,5 @@
   - name: Install oracle db and schemas
     hosts: oracle
     remote_user: $user
-    vars_files:
-      - test.yml
     roles:
       - oracle
