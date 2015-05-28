@@ -1,0 +1,16 @@
+---
+#Vagrant Ansible Playbook
+  - name: Install docker and base images
+    hosts: docker
+    remote_user: $user
+    roles:
+      - {role: docker.ubuntu, when: "ansible_distribution == 'Ubuntu'", kernel_pkg_state: present, kernel_update_and_reboot_permitted: no}
+      - ubuntu-14.04
+
+  - name: Install oracle db and schemas
+    hosts: oracle
+    remote_user: $user
+    vars_files:
+      - test.yml
+    roles:
+      - oracle

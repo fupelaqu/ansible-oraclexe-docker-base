@@ -1,13 +1,5 @@
 ---
 
-  - name: check ubuntu14.04 with oraclexe docker base image
-    shell: docker inspect laposte/ubuntu14.04-oraclexe:{{oracle_xe_version}}
-    ignore_errors: yes
-    register: search_ubuntu_oraclexe_response
-
-  - include: ubuntu14.04-oraclexe-base.yml
-    when: search_ubuntu_oraclexe_response|failed
-
   - file: path=/tmp/{{module}}/roles/oracle/files/sql state=directory
 
   - template: src={{item}} dest=/tmp/{{module}}/roles/oracle/files/sql

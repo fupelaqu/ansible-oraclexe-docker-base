@@ -3,7 +3,9 @@ FROM ubuntu14.04-oraclexe:{{oracle_xe_version}}
 # Add playbooks to the Docker image
 ADD site.yml /tmp/site.yml
 ADD roles /tmp/
+{% if oracle_pump.stat.exists %}
 ADD {{module}}.dmp.zip /tmp/
+{% endif %}
 
 WORKDIR /tmp
 

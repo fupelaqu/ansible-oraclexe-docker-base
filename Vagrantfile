@@ -23,7 +23,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provision :ansible do |ansible|
     ansible.inventory_path = "vagrant-inventory.ini"
-    ansible.playbook = "ubuntu.yml"
+    ansible.playbook = "vagrant-playbook4ubuntu.yml"
     ansible.extra_vars = { user:"vagrant" }
     ansible.sudo = true
     ansible.limit = 'all'

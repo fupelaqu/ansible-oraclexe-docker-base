@@ -3,6 +3,7 @@ FROM ansible/ubuntu14.04-ansible
 # Add playbooks to the Docker image
 ADD site.yml /tmp/site.yml
 ADD roles /tmp/
+ADD oracle-xe-*.rpm /tmp/
 
 WORKDIR /tmp
 

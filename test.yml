@@ -1,0 +1,7 @@
+---
+
+module: "test"
+module_version: "0.0.1"
+db_schema: "TEST"
+db_username: "TEST"
+db_password: "TEST"
