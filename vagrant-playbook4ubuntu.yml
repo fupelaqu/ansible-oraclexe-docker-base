@@ -4,7 +4,7 @@
     hosts: docker
     remote_user: $user
     roles:
-      - {role: docker.ubuntu, when: "ansible_distribution == 'Ubuntu'", kernel_pkg_state: present, kernel_update_and_reboot_permitted: no, pip_version_docker_py: 1.1}
+      - {role: docker.ubuntu, when: "ansible_distribution == 'Ubuntu'", kernel_pkg_state: present, kernel_update_and_reboot_permitted: no, pip_version_docker_py: 1.1} #https://github.com/angstwad/docker.ubuntu/issues/44
       - ubuntu-14.04
 
   - name: Install oracle db and schemas
@@ -37,7 +37,7 @@
           command: "-name {{module}}"
           net: "bridge"
           expose: "1521"
-          ports: "{{ hostvars[inventory_hostname]['ansible_eth1']['ipv4']['address'] }}:1521:1521"
+          ports: "{{ hostvars[inventory_hostname]['ansible_eth1']['ipv4']['address'] }}:{{db_port}}:1521"
           volumes: /var/run/docker.sock:/var/run/docker.sock:ro
           state: reloaded
           restart_policy: always
