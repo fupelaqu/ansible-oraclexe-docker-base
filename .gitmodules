@@ -2,7 +2,3 @@
 	path = docker.ubuntu
 	url = git@github.com:angstwad/docker.ubuntu.git
 	branch = master
-[submodule "ubuntu-14.04/files/ansible-oraclexe"]
-	path = ubuntu-14.04/files/ansible-oraclexe
-	url = git@github.com:fupelaqu/ansible-oraclexe.git
-	branch = master
