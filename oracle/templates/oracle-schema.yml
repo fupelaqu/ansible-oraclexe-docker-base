@@ -2,6 +2,9 @@
 
   - file: path=/{{module}} state=directory owner=oracle group=dba
 
+  - lineinfile: dest=/etc/sudoers state=absent regexp='^Defaults(\s*)requiretty' validate='visudo -cf %s'
+    when: ansible_distribution == 'CentOS'
+
   # Create {{module}} schema
   - name: copy {{module}} oracle sql scripts
     copy: src=sql dest=/{{module}}/ owner=oracle group=dba mode=0500

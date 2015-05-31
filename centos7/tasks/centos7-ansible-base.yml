@@ -1,0 +1,18 @@
+---
+
+  - file: path=/images state=directory
+
+  # centos7 ansible base image
+  - name: check centos7 ansible docker base image
+    shell: docker inspect ansible/centos7-ansible:latest
+    ignore_errors: yes
+    register: search_ubuntu_ansible_response
+
+  - name: copy centos7 ansible docker base image
+    copy: src=images/centos7-ansible.tar dest=/images/
+    when: search_ubuntu_ansible_response|failed
+
+  - name: add centos7 ansible docker base image
+    shell: docker load < /images/centos7-ansible.tar
+    when: search_ubuntu_ansible_response|failed
+

@@ -1,0 +1,6 @@
+---
+
+oracle_xe_version: 11.2.0-1.0
+
+swapfile_size: 2048
+swapfile_location: /swapfile

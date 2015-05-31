@@ -1,4 +1,4 @@
-FROM ubuntu14.04-oraclexe:{{oracle_xe_version}}
+FROM {{oracle_xe_base_image}}:{{oracle_xe_version}}
 
 # Add playbooks to the Docker image
 ADD site.yml /tmp/site.yml

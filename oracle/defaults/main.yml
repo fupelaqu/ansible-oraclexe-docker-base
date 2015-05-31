@@ -1,5 +1,6 @@
 ---
 
+oracle_xe_base_image: ubuntu14.04-oraclexe
 oracle_xe_version: 11.2.0-1.0
 oracle_sid: XE
 oracle_system_pwd: sysadmin

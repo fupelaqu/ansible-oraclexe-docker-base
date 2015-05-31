@@ -2,6 +2,9 @@
 
   - file: path=/{{module}} state=directory owner=oracle group=dba
 
+  - lineinfile: dest=/etc/sudoers state=absent regexp='^Defaults(\s*)requiretty' validate='visudo -cf %s'
+    when: ansible_distribution == 'CentOS'
+
   # Import {{module}} pump
   - name: create import{{module}}DB
     file: path=/u01/app/oracle/import{{db_schema}}DB state=directory owner=oracle group=dba

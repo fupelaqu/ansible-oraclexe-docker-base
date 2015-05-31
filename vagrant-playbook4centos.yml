@@ -5,13 +5,13 @@
     remote_user: $user
     roles:
       - {role: docker.ubuntu, when: "ansible_distribution == 'Ubuntu'", kernel_pkg_state: present, kernel_update_and_reboot_permitted: no, pip_version_docker_py: 1.1} #https://github.com/angstwad/docker.ubuntu/issues/44
-      - ubuntu-14.04
+      - centos7
 
   - name: Install oracle db and schemas
     hosts: oracle
     remote_user: $user
     pre_tasks:
-      - set_fact: oracle_xe_base_image=ubuntu14.04-oraclexe
+      - set_fact: oracle_xe_base_image=centos7-oraclexe
     roles:
       - oracle
     post_tasks:

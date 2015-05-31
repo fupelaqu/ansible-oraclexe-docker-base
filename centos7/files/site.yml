@@ -1,0 +1,10 @@
+---
+
+#########################
+# Docker Oracle XE install #
+#########################
+
+  - name: Install oracle-xe db
+    hosts: localhost
+    roles:
+      - ansible-oraclexe
