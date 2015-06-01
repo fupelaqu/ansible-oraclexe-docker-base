@@ -1,0 +1,9 @@
+---
+
+  - name: check oraclexe docker base image
+    shell: docker inspect {{oracle_xe_base_image}}:{{oracle_xe_version}}
+    ignore_errors: yes
+    register: search_base_oraclexe_response
+
+  - include: oracle-xe-base.yml
+    when: search_base_oraclexe_response|failed

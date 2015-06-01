@@ -1,0 +1,34 @@
+---
+
+  - include: oracle-xe-swap.yml
+
+  - file: path=/tmp/{{oracle_xe_base_image|replace(' ', '_')}} state=directory
+
+  - name: copy docker files
+    copy: src={{item}} dest=/tmp/{{oracle_xe_base_image|replace(' ', '_')}}
+    with_items:
+        - site.yml
+        - start.sh
+
+  - name: copy Dockerfile
+    template: src=Dockerfile dest=/tmp/{{oracle_xe_base_image|replace(' ', '_')}}
+
+  - name: copy oracle files
+    copy: src="oracle-xe-{{oracle_xe_version}}.x86_64.rpm" dest=/tmp/{{oracle_xe_base_image|replace(' ', '_')}}
+
+  - apt: name=git state=present
+    when: ansible_os_family == "Debian"
+
+  - yum: name=git state=present
+    when: ansible_os_family == "RedHat"
+
+  - shell: ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+
+  - name: copy git module
+    git: repo=https://github.com/fupelaqu/ansible-oraclexe.git dest=/tmp/{{oracle_xe_base_image|replace(' ', '_')}}/roles/ansible-oraclexe force=yes
+
+  - name: build oraclexe base image
+    docker_image: path="/tmp/{{oracle_xe_base_image|replace(' ', '_')}}"
+                  name="{{oracle_xe_base_image}}"
+                  state=present
+                  tag="{{oracle_xe_version}}"
