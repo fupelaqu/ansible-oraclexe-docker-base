@@ -1,9 +1,0 @@
----
-
-  - name: check centos7 with oraclexe docker base image
-    shell: docker inspect centos7-oraclexe:{{oracle_xe_version}}
-    ignore_errors: yes
-    register: search_centos_oraclexe_response
-
-  - include: centos7-oraclexe-base.yml
-    when: search_centos_oraclexe_response|failed
