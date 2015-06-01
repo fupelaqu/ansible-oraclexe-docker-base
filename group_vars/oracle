@@ -1,6 +1,6 @@
 ---
 
-module: "{{oracle_xe_base_image|replace('-', '_')}}_test"
+module: "{{oracle_xe_base_image|replace('-', '_')|replace('.', '_')}}_test"
 module_version: "0.0.1"
 db_schema: "TEST"
 db_username: "TEST"

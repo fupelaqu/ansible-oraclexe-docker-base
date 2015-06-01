@@ -13,6 +13,12 @@
     command: mkswap {{ swapfile_location }}
     register: create_swapfile
 
+  - name: Disable swapfile
+    command: swapoff {{ swapfile_location }}
+    ignore_errors: yes
+    when: create_swapfile.changed
+    register: disable_swapfile
+
   - name: Enable swapfile
     command: swapon {{ swapfile_location }}
     ignore_errors: yes
