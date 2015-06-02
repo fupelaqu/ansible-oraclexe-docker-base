@@ -1,0 +1,4 @@
+---
+
+ansible_base_image: ansible/centos7-ansible
+oracle_xe_base_image: centos7-oraclexe

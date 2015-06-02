@@ -1,0 +1,9 @@
+---
+
+oracle_xe_version: 11.2.0-1.0
+
+swapfile_size: 2148
+swapfile_location: /swapfile
+
+#ansible_base_image: ansible/ubuntu14.04-ansible
+#oracle_xe_base_image: ubuntu14.04-oraclexe

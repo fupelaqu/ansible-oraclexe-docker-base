@@ -5,7 +5,11 @@
     remote_user: $user
     roles:
       - {role: docker.ubuntu, when: "ansible_distribution == 'Ubuntu'", kernel_pkg_state: present, kernel_update_and_reboot_permitted: no, pip_version_docker_py: 1.1} #https://github.com/angstwad/docker.ubuntu/issues/44
-      - {role: docker.oraclexe, ansible_base_image: "ansible/centos7-ansible", oracle_xe_base_image: "centos7-oraclexe"}
+    vars_files:
+      - defaults/main.yml
+      - vars/centos7.yml
+    post_tasks:
+      - include: tasks/main.yml
 
   - name: Install oracle db and schemas
     hosts: oracle
