@@ -1,0 +1,80 @@
+---
+#from https://github.com/angstwad/docker.ubuntu
+
+  - name: Fail if not a new release of Ubuntu
+    fail:
+      msg: "{{ ansible_distribution_version }} is not an acceptable version of Ubuntu for this role"
+    when: ansible_distribution_version|version_compare(14.04, '<')
+
+  - name: check if docker has already been installed
+    shell: dpkg-query -W -f='${Status}' lxc-docker 2>/dev/null | grep -c "ok installed"
+    ignore_errors: true
+    register: docker_installed
+
+  - name: install docker
+    shell: wget -qO- https://get.docker.com/ | sh #https://github.com/docker/docker/issues/4036
+    when: not docker_installed or (docker_installed|failed)
+
+  # We must install pip via apt before we can use the pip module below
+  - name: Install pip, python-dev package with apt
+    apt:
+      pkg: "{{ item }}"
+      state: latest
+      update_cache: yes
+      cache_valid_time: 3600
+    with_items:
+      - python-dev
+      - python-pip
+
+  # Upgrade pip with pip to fix angstwad/docker.ubuntu/pull/35 and docker-py/issues/525
+  # Install latest version when no specific release is set.
+  - name: Upgrade latest pip, setuptools, and docker-py with pip
+    pip:
+      name: "{{ item.name }}"
+      state: latest
+    with_items:
+      - { name: pip, version: "{{ pip_version_pip }}" }
+      - { name: setuptools, version: "{{ pip_version_setuptools }}" }
+      - { name: docker-py, version: "{{ pip_version_docker_py }}" }
+    when: item.version=="latest"
+
+  # Install specific version when set in the variables
+  - name: Install specific pip, setuptools, and docker-py with pip
+    pip:
+      name: "{{ item.name }}"
+      state: present
+      version: "{{ item.version }}"
+    with_items:
+      - { name: pip, version: "{{ pip_version_pip }}" }
+      - { name: setuptools, version: "{{ pip_version_setuptools }}" }
+      - { name: docker-py, version: "{{ pip_version_docker_py }}" }
+    when: item.version!="latest"
+
+  - name: Check if /etc/updatedb.conf exists
+    stat:
+      path: /etc/updatedb.conf
+    register: updatedb_conf_exists
+
+  - name: Ensure updatedb does not index /var/lib/docker
+    lineinfile:
+      dest: /etc/updatedb.conf
+      state: present
+      backrefs: yes
+      regexp: '^PRUNEPATHS="(/var/lib/docker )?(.*)"$'
+      line: 'PRUNEPATHS="/var/lib/docker \2"'
+    when: updatedb_conf_exists.stat.exists
+
+  - name: Check if /etc/default/ufw exists
+    stat:
+      path: /etc/default/ufw
+    register: ufw_default_exists
+
+  - name: Change ufw default forward policy from drop to accept
+    lineinfile:
+      dest: /etc/default/ufw
+      regexp: "^DEFAULT_FORWARD_POLICY="
+      line: "DEFAULT_FORWARD_POLICY=\"ACCEPT\""
+    when: ufw_default_exists.stat.exists
+
+  - name: Start Docker
+    service: name=docker state=started

@@ -1,0 +1,13 @@
+---
+
+  - name: install docker on RedHat
+    yum: name={{item}} state=present
+    with_items:
+      - docker
+      - python-docker-py
+
+  - name: start docker at boot
+    shell: systemctl enable docker
+
+  - name: start docker
+    shell: systemctl start docker
