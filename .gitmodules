@@ -1,4 +1,4 @@
 [submodule "docker.ubuntu"]
 	path = docker.ubuntu
-	url = git@github.com:angstwad/docker.ubuntu.git
+url=https://github.com/angstwad/docker.ubuntu
 	branch = master
