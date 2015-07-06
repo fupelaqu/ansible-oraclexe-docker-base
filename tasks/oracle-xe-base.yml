@@ -24,6 +24,12 @@
 
   - shell: ssh-keyscan -H github.com >> ~/.ssh/known_hosts
 
+  - shell: "git config --global http.proxy {{proxy_url}}"
+    when: proxy
+
+  - shell: "git config --global https.proxy {{proxy_url}}"
+    when: proxy
+
   - name: copy git module
     git: repo=https://github.com/fupelaqu/ansible-oraclexe.git dest=/tmp/{{oracle_xe_base_image|replace(' ', '_')}}/roles/ansible-oraclexe force=yes
 

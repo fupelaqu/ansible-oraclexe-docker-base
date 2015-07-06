@@ -8,7 +8,7 @@ ADD oracle-xe-*.rpm /tmp/
 WORKDIR /tmp
 
 # Run Ansible to configure the Docker image
-RUN ansible-playbook site.yml -c local -e docker=yes && \
+RUN ansible-playbook site.yml -c local -e "docker=yes proxy={{proxy}} proxy_url={{proxy_url}}" && \
     rm -rf /tmp/*
 
 ENV ORACLE_HOME /u01/app/oracle/product/11.2.0/xe
