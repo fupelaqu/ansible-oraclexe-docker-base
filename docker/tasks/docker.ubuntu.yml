@@ -15,8 +15,7 @@
     shell: wget -qO- https://get.docker.com/ | sh #https://github.com/docker/docker/issues/4036
     when: not docker_installed or (docker_installed|failed)
 
-  # We must install pip via apt before we can use the pip module below
-  - name: Install pip, python-dev package with apt
+  - name: Install easy_install, python-dev package with apt
     apt:
       pkg: "{{ item }}"
       state: latest
@@ -24,7 +23,10 @@
       cache_valid_time: 3600
     with_items:
       - python-dev
-      - python-pip
+      - python-setuptools #easy_install
+
+  # We must install pip before we can use the pip module below
+  - easy_install: name=pip #state=latest required ansible 2.x
 
   # Upgrade pip with pip to fix angstwad/docker.ubuntu/pull/35 and docker-py/issues/525
   # Install latest version when no specific release is set.
